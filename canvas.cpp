@@ -407,7 +407,7 @@ void myScene::randGenerate(int numOfVertices, int numOfEdges, int maxWeight)
             --i;
             continue;
         }
-        int weight = QRandomGenerator::global()->bounded(0, maxWeight + 1);
+        int weight = QRandomGenerator::global()->bounded(1, maxWeight + 1);
         startItem = getVertex(startItemIndex);
         endItem = getVertex(endItemIndex);
         Arrow *newArrow = new Arrow(startItem, endItem);
