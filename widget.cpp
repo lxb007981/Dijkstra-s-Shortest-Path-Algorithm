@@ -104,20 +104,26 @@ void Widget::randGenerate()
 {
     bool numOfVerticesOk{false};
     int numOfVertices = QInputDialog::getInt(this, tr("Input number of vertices"), tr("Input number of vertices"), 1, 0, 2147483647, 1, &numOfVerticesOk);
+    if(!numOfVerticesOk)
+        return;
     bool edgesDensityOk{false};
     double edgesDensity = QInputDialog::getDouble(this, tr("Input edges density"), tr("Input edges density"), 0.5, 0.0, 1.0, 2, &edgesDensityOk);
+    if(!edgesDensityOk)
+        return;
+
     bool maxWeightOk{false};
-    int maxWeight = QInputDialog::getInt(this, tr("Input max weight"), tr("Input max weight"), 0, 0, 2147483647, 1, &maxWeightOk);
-    if (numOfVerticesOk && edgesDensityOk && maxWeightOk)
-    {
-        int numOfEdges = int(edgesDensity * numOfVertices * (numOfVertices - 1) * 0.5);
-        scene->randGenerate(numOfVertices, numOfEdges, maxWeight);
-    }
+    int maxWeight = QInputDialog::getInt(this, tr("Input max weight"), tr("Input max weight"), 1, 1, 2147483647, 1, &maxWeightOk);
+    if(!maxWeightOk)
+        return;
+
+    int numOfEdges = int(edgesDensity * numOfVertices * (numOfVertices - 1) * 0.5);
+    scene->randGenerate(numOfVertices, numOfEdges, maxWeight);
+
 }
 void Widget::start(bool checked)
 {
     bool choiceOk{false};
-    int choice = QInputDialog::getInt(this, tr("Choose data structure"), tr("Enter 0 for AVL Tree, 1 for Red-Blakc Tree"), 0, 0, 1, 1, &choiceOk);
+    int choice = QInputDialog::getInt(this, tr("Choose data structure"), tr("Enter 0 for AVL Tree, 1 for Red-Black Tree"), 0, 0, 1, 1, &choiceOk);
     if (choiceOk) //TODO
     {
         scene->setPriorityQueue((choice == 0) ? myScene::AVLTree : myScene::RBTree);
