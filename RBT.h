@@ -59,24 +59,6 @@ public:
         return parent->left;
     }
 
-    // moves node down and moves given node in its place
-    void moveDown(RBT_Node *newParent)
-    {
-        if (parent != nullptr)
-        {
-            if (isOnLeft())
-            {
-                parent->left = newParent;
-            }
-            else
-            {
-                parent->right = newParent;
-            }
-        }
-        newParent->parent = parent;
-        parent = newParent;
-    }
-
     bool hasRedChild()
     {
         return (left != nullptr && left->color == RED) ||
