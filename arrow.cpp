@@ -1,7 +1,6 @@
 #include "arrow.h"
 #include <QPen>
 #include <QPainter>
-#include <QDebug>
 
 Arrow::Arrow(Vertex *startItem, Vertex *endItem, QGraphicsItem *parent)
     : QGraphicsLineItem(parent)
@@ -10,6 +9,7 @@ Arrow::Arrow(Vertex *startItem, Vertex *endItem, QGraphicsItem *parent)
     myEndItem = endItem;
     myColor = Qt::black;
     setPen(QPen(myColor, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    setCursor(Qt::OpenHandCursor);
 }
 
 void Arrow::updatePosition()

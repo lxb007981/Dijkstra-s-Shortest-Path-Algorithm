@@ -42,38 +42,24 @@ protected:
 
 private:
     Mode myMode;
+    priorityQueue myQueueType{priorityQueue::AVLTree};
     Vertex *startItem{nullptr};
     Vertex *endItem{nullptr};
     QList<Vertex *> sceneVertices;
     QList<Arrow *> sceneArrows;
     Arrow *findArrow(Vertex *, Vertex *);
-    void removeArrowsAttachedToOneVertexFromSceneArrows(Vertex *);
     int processingWeight{0};
     unvisited_set *setp{nullptr};
     abstractPrioritySet *treep{nullptr};
-    priorityQueue myQueueType{priorityQueue::AVLTree};
     graph *gp{nullptr};
     solver *sceneSolver{nullptr};
+
+    void removeArrowsAttachedToOneVertexFromSceneArrows(Vertex *);
     void resetVerticesColor();
     void rebuildGraph();
     void removeVertex(Vertex *vertexToBeRemoved);
     Vertex *getVertex(int vertex);
-    QColor enum2Color(solver::color color)
-    {
-        switch (color)
-        {
-        case 0:
-            return Qt::blue;
-        case 1:
-            return Qt::red;
-        case 2:
-            return Qt::green;
-        case 3:
-            return Qt::gray;
-        case 4:
-            return Qt::cyan;
-        }
-    }
+    QColor enum2Color(solver::color color);
 
 public:
     myScene();

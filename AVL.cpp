@@ -19,34 +19,34 @@ AVL_Node *AVL::rotate_left(AVL_Node *node) //not modify the root
     AVL_Node *y = node->right;
     AVL_Node *T2 = y->left;
 
-    // Perform rotation
+    // rotate
     y->left = node;
     node->right = T2;
 
-    // Update heights
+    // update heights
     node->height = max(height(node->left), height(node->right)) + 1;
     node->height = max(height(y->left), height(y->right)) + 1;
 
-    // Return new root
+    // eeturn new root
     return y;
 }
 
-// A utility function to left
-// rotate subtree rooted with node
+
+
 AVL_Node *AVL::rotate_right(AVL_Node *y)
 {
     AVL_Node *x = y->left;
     AVL_Node *T2 = x->right;
 
-    // Perform rotation
+    // perform rotation
     x->right = y;
     y->left = T2;
 
-    // Update heights
+    // update heights
     y->height = max(height(y->left), height(y->right)) + 1;
     x->height = max(height(x->left), height(x->right)) + 1;
 
-    // Return new root
+    // return new root
     return x;
 }
 
@@ -57,7 +57,6 @@ void AVL::insert(const myPair &data)
 
 AVL_Node *AVL::insertInternal(AVL_Node *node, const myPair &x)
 {
-    /* 1. Perform the normal BST rotation */
     if (!node)
         return new AVL_Node(x);
 
@@ -71,15 +70,11 @@ AVL_Node *AVL::insertInternal(AVL_Node *node, const myPair &x)
         return node;
     }
 
-    /* 2. Update height of this ancestor node */
-    node->height = 1 + max(height(node->left),
-                           height(node->right));
+    // update height of this ancestor node
+    node->height = 1 + max(height(node->left), height(node->right));
 
-    /* 3. Get the balance factor of this
-        ancestor node to check whether
-        this node became unbalanced */
+    // get the balance factor
     int balance = getBalance(node);
-
 
     // Left Left Case
     if (balance > 1 && x < node->left->value)
@@ -103,7 +98,7 @@ AVL_Node *AVL::insertInternal(AVL_Node *node, const myPair &x)
         return rotate_left(node);
     }
 
-    /* return the (unchanged) node pointer */
+    // return the (unchanged) node pointer
     return node;
 }
 
@@ -140,6 +135,12 @@ void AVL::printInternal(AVL_Node *node, int depth) const
     for (int j = 0; j < depth; j++) // Print the node value
         debugString += "    ";
     debugString += QString::number(node->value.distance);
+    if (!node->duplicates.empty())
+    {
+        debugString += "(";
+        debugString += QString::number(node->duplicates.size() + 1);
+        debugString += ")";
+    }
     qDebug() << debugString;
 
     printInternal(node->left, depth + 1); // Recursion: left sub-tree
@@ -151,7 +152,7 @@ void AVL::remove(const myPair &data)
 }
 
 AVL_Node *AVL::removeInternal(AVL_Node *root, const myPair &key)
-{ // STEP 1: PERFORM STANDARD BST DELETE
+{
     if (!root)
         return root;
 
@@ -190,61 +191,47 @@ AVL_Node *AVL::removeInternal(AVL_Node *root, const myPair &key)
         }
     }
 
-    // if key is same as root's key, then
-    // This is the node to be deleted
+
     else
     {
         // node with only one child or no child
-        if (!root->left ||
-            !root->right)
+        if (!root->left || !root->right)
         {
-            AVL_Node *temp = root->left ? //whether it has root->left
+            AVL_Node *temp = root->left ?
                                  root->left
                                         : root->right; //temp = the only child, or nullptr
 
-            // No child case
+            // no child
             if (!temp)
             {
                 temp = root;
                 root = nullptr;
             }
-            else               // One child case
-                *root = *temp; // Copy the contents of
-                               // the non-empty child
+            else               // one child
+                *root = *temp; // copy the contents (including duplicates) of the non-empty child
             delete temp;
         }
-        else
+        else// node with two children: find smallest in the right subtree and replace with it
         {
-            // node with two children: Get the inorder
-            // successor (smallest in the right subtree)
             AVL_Node *temp = find_min(root->right);
-
-            // Copy the inorder successor's
-            // data to this node
+            // copy the right's leftmost's data to this node
+            // pay attention to the duplicates vector!
             root->value = temp->value;
-
-            // Delete the inorder successor
-            root->right = removeInternal(root->right,
-                                         temp->value);
+            root->duplicates = temp->duplicates;
+            // delete the right's leftmost's
+            root->right = removeInternal(root->right,temp->value);
         }
     }
 
-    // If the tree had only one node
-    // then return
+    // the tree had only one node, return
     if (!root)
         return root;
 
-    // STEP 2: UPDATE HEIGHT OF THE CURRENT NODE
     root->height = 1 + max(height(root->left),
                            height(root->right));
 
-    // STEP 3: GET THE BALANCE FACTOR OF
-    // THIS NODE (to check whether this
-    // node became unbalanced)
     int balance = getBalance(root);
 
-    // If this node becomes unbalanced,
-    // then there are 4 cases
 
     // Left Left Case
     if (balance > 1 &&

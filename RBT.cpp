@@ -1,5 +1,5 @@
 #include "RBT.h"
-//#include <QDebug>
+#include <QDebug>
 RBT::~RBT() {
 	while (root) 
 	{
@@ -70,7 +70,7 @@ void RBT::swapColors(RBT_Node* x1, RBT_Node* x2)
 	x1->color = x2->color;
 	x2->color = temp;
 }
-void RBT::swapValues(RBT_Node* u, RBT_Node* v)
+void RBT::swapValues(RBT_Node* u, RBT_Node* v)//swap value and duplicates vector
 {
 	myPair temp;
 	std::vector<RBT_Node*> duplicatesTemp;
@@ -84,7 +84,7 @@ void RBT::swapValues(RBT_Node* u, RBT_Node* v)
 	v->val = temp;
 	v->duplicates = duplicatesTemp;
 }
-void RBT::fixRedRed(RBT_Node* x)
+void RBT::fixDoubleRed(RBT_Node* x)
 {
 	// if x is root color it black and return
 	if (x == root)
@@ -94,22 +94,21 @@ void RBT::fixRedRed(RBT_Node* x)
 	}
 
 	// initialize parent, grandparent, uncle
-	RBT_Node* parent = x->parent, * grandparent = parent->parent,
-		* uncle = x->uncle();
+    RBT_Node* parent = x->parent, * grandparent = parent->parent,* uncle = x->uncle();
 
 	if (parent->color != BLACK)
 	{
 		if (uncle != nullptr && uncle->color == RED)
 		{
-			// uncle red, perform recoloring and recurse
+            // uncle red, recolor and recurse
 			parent->color = BLACK;
 			uncle->color = BLACK;
 			grandparent->color = RED;
-			fixRedRed(grandparent);
+            fixDoubleRed(grandparent);
 		}
 		else
 		{
-			// Else perform LR, LL, RL, RR
+            // else perform LR, LL, RL, RR
 			if (parent->isOnLeft())
 			{
 				if (x->isOnLeft())
@@ -227,7 +226,7 @@ void RBT::deleteNode(RBT_Node* v)
 		}
 		else
 		{
-			// Detach v from tree and move u up
+            // detach v from tree and move u up
 			if (v->isOnLeft())
 			{
 				parent->left = u;
@@ -408,7 +407,7 @@ void RBT::insert(const myPair& n)
 			temp->right = newNode;
 
 		// fix red red voilaton if exists
-		fixRedRed(newNode);
+        fixDoubleRed(newNode);
 	}
 }
 
@@ -417,7 +416,7 @@ void RBT::remove(const myPair&key)
 	if (root == nullptr)
 		// Tree is empty
 		return;
-	RBT_Node* v = search(key);// , * u;
+    RBT_Node* v = search(key);
 	if (v->val == key)//found the node to be deleted
 	{
 		if (!v->duplicates.empty())
@@ -463,15 +462,19 @@ void RBT::printBack(RBT_Node* node, int depth) const
 	if (!node) // Base case
 		return;
 	printBack(node->right, depth + 1); // Recursion: right sub-tree
-
+    QString debugString;
 	for (int j = 0; j < depth; j++) // Print the node value
-		std::cout << '\t';
-	std::cout << node->val << color2string(node->color);
+        debugString += "    ";
+    debugString += QString::number(node->val.distance);
+    debugString += QString::fromStdString(color2string(node->color));
+
 	if (!node->duplicates.empty())
 	{
-		std::cout<< "("<< node->duplicates.size() + 1<<")";
+        debugString += "(";
+        debugString += QString::number(node->duplicates.size() + 1);
+        debugString += ")";
 	}
-	std::cout << std::endl;
+    qDebug() << debugString;
 
 	printBack(node->left, depth + 1); // Recursion: left sub-tree
 }

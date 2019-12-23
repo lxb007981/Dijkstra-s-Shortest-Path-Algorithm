@@ -38,18 +38,7 @@ void myScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 gp->removeEdge(itemToRemoveArrowCast->startItem()->vertex, itemToRemoveArrowCast->endItem()->vertex);
                 delete itemToRemoveArrowCast;
             }
-/*
-            foreach (Arrow *iter, sceneArrows)
-            {
-                qDebug() << iter->startItem()->vertex << "--" << iter->endItem()->vertex;
-            }
-            qDebug() << "sceneArrows.size()" << sceneArrows.size();
-            foreach (Vertex *iter, sceneVertices)
-            {
-                qDebug() << iter->vertex;
-            }
-            qDebug() << "sceneVertices.size()" << sceneVertices.size();
-            */
+
             rebuildGraph();
 
             event->accept();
@@ -62,6 +51,12 @@ void myScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     }
     case drawingVertex:
     {
+        if(sceneSolver)
+        {
+            event->accept();
+            return;
+        }
+
         QGraphicsItem *itemToAdd{nullptr};
         itemToAdd = itemAt(event->scenePos(), QTransform());
         if (event->buttons() == Qt::LeftButton && !itemToAdd)
@@ -81,6 +76,11 @@ void myScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     }
     case drawingEdge:
     {
+        if(sceneSolver)
+        {
+            event->accept();
+            return;
+        }
         if (event->button() != Qt::LeftButton)
         {
             event->accept();
@@ -170,7 +170,7 @@ void myScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 Vertex *itemSelectedVertexCast = qgraphicsitem_cast<Vertex *>(itemSelected);
                 if (itemSelectedVertexCast)
                 {
-                    setp = new unvisited_set(20);
+                    setp = new unvisited_set(40);
                     switch (myQueueType)
                     {
                     case priorityQueue::AVLTree:
@@ -253,13 +253,29 @@ Arrow *myScene::findArrow(Vertex *startItem, Vertex *endItem)
         }
     return nullptr;
 }
+QColor myScene::enum2Color(solver::color color)
+{
+    switch (color)
+    {
+    case 0:
+        return Qt::blue;
+    case 1:
+        return Qt::red;
+    case 2:
+        return Qt::green;
+    case 3:
+        return Qt::gray;
+    case 4:
+        return Qt::cyan;
+    }
+}
+
 void myScene::step()
 {
     if (!sceneSolver)
     {
         return;
     }
-    resetArrowsColor();
     if (sceneSolver->paint.empty())
     {
         emit algorithmFinished();
@@ -287,6 +303,10 @@ void myScene::step()
         QColor color = enum2Color(std::get<2>(currentPaint));
         processingVertex->setColor(color);
         processingVertex->setDistance(std::get<1>(currentPaint));
+        if(std::get<2>(currentPaint)==solver::color::cyan)
+        {
+            resetArrowsColor();
+        }
         break;
     }
     }

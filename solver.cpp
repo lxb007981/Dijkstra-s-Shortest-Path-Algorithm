@@ -28,11 +28,7 @@ bool solver::step()
 
     myPair currentVertex = priorityQueue->find_min_value();
     paint.push(std::make_tuple(currentVertex.vertex, currentVertex.distance, blue));
-    qDebug() << "current vertex is (" << currentVertex.vertex << ", " << currentVertex.distance << ")";
     priorityQueue->remove(currentVertex);
-    qDebug() << "remove current distance from tree " << currentVertex.distance << "vertex" << currentVertex.vertex;
-    qDebug() << "Start Printing";
-    priorityQueue->print();
     unvisited_setP->remove(currentVertex.vertex);
 
     for (std::list<std::pair<int, int>>::const_iterator iter = graphP->arrayOfList[currentVertex.vertex].getNeighborIterator();
@@ -51,13 +47,9 @@ bool solver::step()
 
             graphP->setTentativeDistance(iter->first, newTentativeDistance);
             priorityQueue->remove(myPair(iter->first, previousTentativeDistance));
-            qDebug() << "remove from tree (" << iter->first << ", " << previousTentativeDistance << ")";
-
             priorityQueue->insert(myPair(iter->first, newTentativeDistance));
-            qDebug() << "insert to tree (" << iter->first << ", " << newTentativeDistance << ")";
             paint.push(std::make_tuple(iter->first, newTentativeDistance, green));
             paint.push(std::make_tuple(iter->first, newTentativeDistance, cyan));
-
             graphP->setPreviousVertex(iter->first, currentVertex.vertex);
         }
         else
@@ -67,8 +59,6 @@ bool solver::step()
         }
     }
     paint.push(std::make_tuple(currentVertex.vertex, currentVertex.distance, gray));
-    qDebug() << "Start Printing";
-    priorityQueue->print();
     return true;
 }
 

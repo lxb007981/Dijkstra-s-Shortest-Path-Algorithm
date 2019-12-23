@@ -7,7 +7,6 @@ inline int max(int a, int b)
 {
 	return (a > b) ? a : b;
 }
-// An AVL tree node  
 class AVL_Node
 {
 public:

@@ -29,7 +29,6 @@ private:
     QPushButton* clearButton;
     QPushButton* showPathButton;
     void createButtons();
-    void resetAllButtons();
 
 private slots:
     void drawVertex(bool);

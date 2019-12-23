@@ -1,8 +1,9 @@
 #include <Items.h>
 #include "arrow.h"
 #include <QGraphicsScene>
-#include <QDebug>
+
 int Vertex::vertexCount = 0;
+
 Vertex::Vertex()
     : myColor(Qt::black)
 {

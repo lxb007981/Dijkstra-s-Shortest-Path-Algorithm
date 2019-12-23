@@ -63,7 +63,7 @@ void Widget::createButtons()
 void Widget::getWeight()
 {
     bool ok{false};
-    int weight = QInputDialog::getInt(this, tr("Input Weight"), tr("Input Weight"), 0, 0, 2147483647, 1, &ok);
+    int weight = QInputDialog::getInt(this, tr("Input Weight"), tr("Input Weight"), 1, 1, 2147483647, 1, &ok);
     if (ok)
         scene->setProcessingWeight(weight);
 }
@@ -167,10 +167,4 @@ void Widget::showPath(bool checked)
         scene->resetArrowsColor();
     }
 }
-void Widget::resetAllButtons()
-{
-    drawVertexButton->setChecked(false);
-    drawEdgeButton->setChecked(false);
-    startButton->setChecked(false);
-    showPathButton->setChecked(false);
-}
+
